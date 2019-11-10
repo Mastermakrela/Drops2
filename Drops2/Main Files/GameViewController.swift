@@ -6,29 +6,28 @@
 //  Copyright © 2019 Krzysztof Kostrzewa. All rights reserved.
 //
 
-import UIKit
-import SpriteKit
 import GameplayKit
+import SpriteKit
+import UIKit
 
 class GameViewController: UIViewController {
+    @IBOutlet var gameSceneView: SKView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let view = self.view as! SKView? {
-            // Load the SKScene from 'GameScene.sks'
-            if let scene = SKScene(fileNamed: "GameScene") {
-                // Set the scale mode to scale to fit the window
-                scene.scaleMode = .aspectFill
-                
-                // Present the scene
-                view.presentScene(scene)
-            }
-            
+
+        if let view = gameSceneView {
             view.ignoresSiblingOrder = true
-            
             view.showsFPS = true
             view.showsNodeCount = true
+            view.showsPhysics = true
+            view.showsDrawCount = true
+
+            // Load the SKScene from 'GameScene.sks'
+            if let scene = SKScene(fileNamed: "Menu") {
+                scene.scaleMode = .aspectFit
+                view.presentScene(scene)
+            }
         }
     }
 
@@ -38,7 +37,7 @@ class GameViewController: UIViewController {
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
+            return .landscape
         } else {
             return .all
         }
