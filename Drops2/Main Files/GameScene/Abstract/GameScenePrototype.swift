@@ -18,9 +18,9 @@ class GameScenePrototype: SKScene, SKPhysicsContactDelegate {
     
     private var wallsTileMap: SKTileMapNode!
     private var holesTileMap: SKTileMapNode!
-    private var gatewaysTileMap: SKTileMapNode!
+    var gatewaysTileMap: SKTileMapNode!
     private var ballTileMap: SKTileMapNode!
-    private var ball: SKSpriteNode!
+    var ball: SKSpriteNode!
     
     // MARK: - Main Logic
     
@@ -156,14 +156,14 @@ class GameScenePrototype: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    private func prepareGateways() {
+    func prepareGateways() {
         guard let gtm = childNode(withName: "gatewaysTileNode") as? SKTileMapNode else {
             fatalError("Holes not loaded")
         }
         gatewaysTileMap = gtm
         
         var count = 0
-        let names = gatewaysTileMap.userData as! [String: String]
+        let names = gatewaysTileMap.userData as? [String: String] ?? [:]
         
         let tileSize = gatewaysTileMap.tileSize
         let halfWidth = CGFloat(gatewaysTileMap.numberOfColumns) / 2 * tileSize.width
@@ -173,7 +173,6 @@ class GameScenePrototype: SKScene, SKPhysicsContactDelegate {
             for row in 0..<gatewaysTileMap.numberOfRows {
                 if gatewaysTileMap.tileDefinition(atColumn: col, row: row) != nil {
                     count += 1
-                    
                     let tileNode = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 0, height: 0))
                     
                     let x = CGFloat(col) * tileSize.width - halfWidth + tileSize.width
@@ -212,6 +211,12 @@ class GameScenePrototype: SKScene, SKPhysicsContactDelegate {
                     case "StartPoint":
                         ball.position = CGPoint(x: x, y: y)
                         ball.isHidden = false
+                        
+                    case "Camera":
+                        let cameraNode = SKCameraNode()
+                        cameraNode.position = CGPoint(x: x, y: y)
+                        addChild(cameraNode)
+                        camera = cameraNode
                         
                     default:
                         break
@@ -269,7 +274,7 @@ class GameScenePrototype: SKScene, SKPhysicsContactDelegate {
 //        let row = wallsTileMap.tileRowIndex(fromPosition: position)
     }
     
-    // MARK: - Functions that subclass should override
+    // MARK: - Functions for subclasses
     
     func ballTouchedEdge() {}
     
@@ -278,6 +283,12 @@ class GameScenePrototype: SKScene, SKPhysicsContactDelegate {
     func ballTouchedHole(_ hole: SKNode) {}
     
     func ballTouchedGateway(_ gateway: SKNode) {}
+    
+    func presentSceneWith(fileName: String, fadeDuration: Double = 1.5, scaleMode: SKSceneScaleMode = .aspectFit) {
+        guard let scene = SKScene(fileNamed: fileName) else { return }
+        scene.scaleMode = scaleMode
+        view?.presentScene(scene, transition: SKTransition.fade(withDuration: fadeDuration))
+    }
 }
 
 // MARK: - Ball functions

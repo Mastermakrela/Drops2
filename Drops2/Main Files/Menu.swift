@@ -9,12 +9,20 @@
 import SpriteKit
 
 class Menu: GameScenePrototype {
-    
     override func ballTouchedGateway(_ gateway: SKNode) {
-        
-        print(gateway.name)
-        
-        
+        switch gateway.name {
+        case "settings":
+            print("goto settings")
+        case"start":
+            print("goto game")
+            presentSceneWith(fileName: "Level1")
+
+        case "levels":
+            print("goto level selection")
+            presentSceneWith(fileName: "Levels", fadeDuration: 1, scaleMode: .aspectFill)
+
+        default:
+            break
+        }
     }
-    
 }

@@ -8,18 +8,19 @@
 
 import SpriteKit
 
-class GameScene2: GameScenePrototype {
-    
+class Level: GameScenePrototype {
+    var levelNumber: Int? {
+        return scene?.userData?["levelNo"] as? Int
+    }
+
     override func ballTouchedHole(_ hole: SKNode) {
         switch hole.name {
         case "WinHole":
-            print("You Won")
+            if let ln = levelNumber {
+                presentSceneWith(fileName: "Level\(ln+1)")
+            }
         default:
-            guard let scene = SKScene(fileNamed: "GameScene2") else { return }
-            scene.scaleMode = .aspectFit
-            
-            view?.presentScene(scene, transition: SKTransition.fade(withDuration: 1.5))
+            presentSceneWith(fileName: "Menu")
         }
     }
-    
 }
